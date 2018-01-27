@@ -1,40 +1,26 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Site where
 
+import Servant
 import Servant.API
-import Data.Aeson (FromJSON, ToJSON)
+import Model
 import Data.Proxy (Proxy (..))
 import Elm (ElmType)
 import GHC.Generics (Generic)
-import Servant.API
 import Web.Internal.FormUrlEncoded (FromForm)
 
-data Site = Site 
-            { ownerName :: Text
-            , ownerScreenName :: Text
-            , ownerSNSAccounts :: [SNSAccount]
-            }
 
-data SNSAccount = SNSAccount
-           { screenName :: Text
-           , accountURL  :: URL
-           , serviceIcon :: URL
-           , accountIcon :: URL
-           }
+mainPage = Page "test" "`hogehogehogeho-"
 
-data MainPage = MainPage
-           { mainPageTItle :: Text
-           , mainPageBody :: Markdown
-           }
+server :: Server API
+server = pure mainPage
 
-type Markdown = Text
-type URL = Text
+type API = "api" :> Get '[JSON] Page
 
-instance FromJSON Site
-instance FromJSON MainPage
-instance ToJSON Site
-instance ToJSON MainPage
-instance FromForm Site 
-instance FromForm MainPage
-instance ElmType Site 
-instance ElmType MainPage
-
+api :: Proxy API
+api = Proxy
