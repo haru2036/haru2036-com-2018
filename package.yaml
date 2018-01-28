@@ -31,3 +31,18 @@ library:
     - Site
     - Model
   other-modules: []
+
+executable:
+  main: app/Main.hs
+  dependencies:
+    - haru2036com
+    - warp
+
+tests:
+  generate:
+    source-dirs: app
+    main: Generate.hs
+    dependencies:
+      - haru2036com
+      - shelly
+    other-modules: []
