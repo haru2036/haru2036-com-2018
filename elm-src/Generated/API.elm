@@ -1,23 +1,41 @@
 module Generated.API exposing (..)
+{-| 
 
+# Definition
+@docs Page
+
+# getting API values
+@docs decodePage, encodePage, getApi
+
+-}
+
+import Json.Encode
 import Json.Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
-import Json.Encode
 import Http
 import String
 
 
+{-| 
+Todo:describe about this type
+-}
 type alias Page =
     { pageTitle : String
     , pageBody : String
     }
 
+{-| 
+Todo:describe about this function
+-}
 decodePage : Decoder Page
 decodePage =
     decode Page
         |> required "pageTitle" string
         |> required "pageBody" string
 
+{-| 
+Todo:describe about this function
+-}
 encodePage : Page -> Json.Encode.Value
 encodePage x =
     Json.Encode.object
@@ -25,6 +43,9 @@ encodePage x =
         , ( "pageBody", Json.Encode.string x.pageBody )
         ]
 
+{-| 
+Todo:describe about this function
+-}
 getApi : Http.Request (Page)
 getApi =
     Http.request
