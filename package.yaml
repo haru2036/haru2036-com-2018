@@ -37,6 +37,8 @@ executable:
   dependencies:
     - haru2036com
     - warp
+    - wai-cors
+    - servant-options
 
 tests:
   generate:

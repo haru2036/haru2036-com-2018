@@ -1,38 +1,73 @@
-module FrontPage exposing (..)
-
+{-|hoge
+@docs Msg, Model, init, initialModel, loadingPage, main, mainPage, pageWrapper, subscriptions, update, view
+-}
 import Generated.API exposing (Page)
 import Css exposing(..)
---import Css.Transitions exposing(height3, width3)
 import Time exposing(millisecond)
+import Http
 import Html 
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class,id, css, href, src)
 import Html.Styled.Events exposing (onClick)
 
+{-|
+this is main function of this page
+-}
 main : Program Never Model Msg
 main = 
-     Html.beginnerProgram
-         { view = view >> toUnstyled
-         , update = update
-         , model = initialModel
-         }
+     Html.program
+          { init = init 
+          , view = view >> toUnstyled
+          , update = update
+          , subscriptions = subscriptions
+          }
 
-type Msg = NoOp
+{-|
+msg
+-}
+type Msg = NoOp | LoadMainPage (Result Http.Error Page) | DummyPage
 
-update : msg -> Model -> Model
-update _ _ = initialModel
+{-|
+this is the model. toplevel of model as state of each pages.
+-}
+type Model = MainPage Page | LoadingPage 
 
-type Model = MainPage Page 
+{-|
+-}
+init : (Model, Cmd Msg)
+init =
+      ( LoadingPage
+      , Http.send LoadMainPage Generated.API.getApi
+      )
 
+{-|
+-}
+subscriptions : Model -> Sub Msg
+subscriptions model =
+      Sub.none
+
+{-|
+-}
+update : Msg -> Model -> (Model, Cmd Msg)
+update message model = case message of 
+    LoadMainPage (Ok result) -> (MainPage result, Cmd.none)
+    DummyPage -> (MainPage <| Page "dummy" "hogehoge", Http.send LoadMainPage Generated.API.getApi)
+    _ -> (initialModel, Cmd.none)
+
+
+{-|
+-}
 initialModel : Model
-initialModel = MainPage <| Page "Hello, World!" "hello"
+initialModel = LoadingPage
 
-pageWrapper : Html msg -> Html msg
+{-|
+-}
+pageWrapper : Html Msg -> Html Msg
 pageWrapper body = div [ class "main-wrapper"
                  , css [ position relative 
                        , width (pct 100)
                        , height (pct 100)
-                       , backgroundImage (url "")
+                       , backgroundImage (url "https://storage.googleapis.com/mstdn-haru2036/backgrounds/20790506558_33e38aecc3_k.jpg")
                        , display block
                        , backgroundSize cover
                        , backgroundRepeat noRepeat
@@ -42,7 +77,9 @@ pageWrapper body = div [ class "main-wrapper"
                  [ body ]
                                  
 
-loadingPage : Html msg
+{-|
+-}
+loadingPage : Html Msg
 loadingPage = pageWrapper <| div [ class "main-card" 
                        , css 
                          [ display inlineBlock
@@ -61,10 +98,15 @@ loadingPage = pageWrapper <| div [ class "main-card"
                          ]
                        ]
                        [
+                           text "loading..."
+                           , button [ onClick DummyPage] [ text "dummy page" ]
                        ]
 
-mainPage : Page -> Html msg
-mainPage page =  pageWrapper <| div [ class "main-card" 
+{-|
+-}
+--, backgroundImage (linearGradient (stop <| rgb 255 255 255) (stop <| rgb 220 220 220) [] )
+mainPage : Page -> Html Msg
+mainPage page = pageWrapper <| div [ class "main-card" 
                        , css 
                          [ display inlineBlock
                          , backgroundColor (rgb 250 250 250)
@@ -114,6 +156,9 @@ mainPage page =  pageWrapper <| div [ class "main-card"
                      ]
          
 
-view : Model -> Html msg
+{-|
+-}
+view : Model -> Html Msg
 view model = case model of
   MainPage page -> mainPage page
+  LoadingPage -> loadingPage

@@ -7,7 +7,9 @@
 module Site where
 
 import Servant
+import Servant.EDE (HTML, loadTemplates)
 import Servant.API
+import Data.Aeson
 import Model
 import Data.Proxy (Proxy (..))
 import Elm (ElmType)
@@ -19,8 +21,16 @@ mainPage = Page "test" "`hogehogehogeho-"
 
 server :: Server API
 server = pure mainPage
+         :<|> serveDirectoryFileServer "static"
+         :<|> pure mempty
 
-type API = "api" :> Get '[JSON] Page
+type API = JSONAPI
+        :<|> "static" :> Raw
+        :<|> Get '[HTML "index.html"] Object
+type JSONAPI = "api" :> Get '[JSON] Page
 
 api :: Proxy API
 api = Proxy
+
+jsonAPI :: Proxy JSONAPI
+jsonAPI = Proxy

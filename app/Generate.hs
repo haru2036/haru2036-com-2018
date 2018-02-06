@@ -7,7 +7,7 @@ import Elm
 import Servant.Elm
 import Shelly (mkdir_p, shelly)
 import Model 
-import Site (API)
+import Site (JSONAPI)
 
 
 elmOpts :: ElmOptions
@@ -21,7 +21,7 @@ spec = Spec ["Generated", "API"]
              : toElmTypeSource    (Proxy :: Proxy Page)
              : toElmDecoderSource (Proxy :: Proxy Page)
              : toElmEncoderSource (Proxy :: Proxy Page)
-             : generateElmForAPIWith elmOpts  (Proxy :: Proxy API))
+             : generateElmForAPIWith elmOpts  (Proxy :: Proxy JSONAPI))
 
 main :: IO ()
 main = do

@@ -30,8 +30,8 @@ Todo:describe about this function
 decodePage : Decoder Page
 decodePage =
     decode Page
-        |> required "pageTitle" string
-        |> required "pageBody" string
+        |> required "Title" string
+        |> required "Body" string
 
 {-| 
 Todo:describe about this function
@@ -39,8 +39,8 @@ Todo:describe about this function
 encodePage : Page -> Json.Encode.Value
 encodePage x =
     Json.Encode.object
-        [ ( "pageTitle", Json.Encode.string x.pageTitle )
-        , ( "pageBody", Json.Encode.string x.pageBody )
+        [ ( "Title", Json.Encode.string x.pageTitle )
+        , ( "Body", Json.Encode.string x.pageBody )
         ]
 
 {-| 
